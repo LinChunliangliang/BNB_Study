@@ -1,0 +1,35 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/Bank.sol": {
+      "content": "// SPDX-License-Identifier: GPL-3.0\npragma solidity ^0.8.0;\n\n\ncontract Bank {\n\n    // 版本控制\n    //Storage version 1\n    //uint256 public constant VERSION = 1;\n    uint256 public constant VERSION = 2;\n\n    // 银行拥有者，只有银行拥有者可以查询所有用户的余额 \n    address public owner; // 合约的拥有者\n\n    // 初始化函数控制执行一次\n    bool public initialized;\n\n    \n    // 用于记录每个地址转账金额\n    mapping (address => uint256) public balances;\n\n    //Storage version 2\n    // 用户凭证\n    struct DepositReceipt {\n        uint256 amount;\n        uint256 timestamp;\n    }\n\n    bool locked;\n\n    mapping(address => DepositReceipt[]) private depositReceipts;\n\n\n    event Deposit(address indexed account, uint amount);\n    event Withdrawal(address indexed account, uint amount);\n    event Transfer(address indexed from, address indexed to, uint256 amount);\n\n\n    modifier initializer() {\n        require(!initialized,\"Only init once\");\n        _;\n        initialized = true;\n    }\n    \n    // Logic version 1\n    // 初始化函数\n    function initialize() public initializer {\n        owner = msg.sender;\n    }\n\n    // 存款\n    function deposit() public payable {\n        require(msg.value > 0, \"Deposit money must be greater than zero\");\n        balances[msg.sender] += msg.value;\n        depositReceipts[msg.sender].push(DepositReceipt(msg.value, block.timestamp));\n        emit Deposit(msg.sender, msg.value);\n    }\n\n    // 仅限合约拥有者访问函数修饰符\n    modifier onlyOwner {\n        require(msg.sender == owner, \"Only owner can perform this operation\");\n        _;\n    }\n\n    // 只有银行可以查询用户余额\n    function getUserBalance(address _address) public onlyOwner view returns (uint256){\n        return balances[_address];\n    }\n\n    // 用户查询余额函数\n    function balance() public view returns (uint256) {\n        return balances[msg.sender];\n    }\n\n    // Logic version 2\n     // 避免重入\n    modifier noReentrancy() {\n       require(!locked, \"No reentrancy\");\n        locked = true;\n        _;\n        locked = false;\n    }\n\n    // 取款\n    function withdraw(uint amount) public noReentrancy {\n        require(amount <= balances[msg.sender], \"Insufficient balance\");\n        balances[msg.sender] -= amount;\n        payable(msg.sender).transfer(amount);\n        emit Withdrawal(msg.sender, amount);\n    }\n\n    // 转账 \n    function transfer(address recipient, uint amount) public {\n        require(recipient != address(0), \"Invalid recipient address.\");\n        require(amount <= balances[msg.sender], \"Insufficient balance\");\n        balances[msg.sender] -= amount;\n        balances[recipient] += amount;\n\n        emit Transfer(msg.sender, recipient, amount);\n    }\n\n    // 查询凭证\n    function getDepositReceipts(address account) external view returns (DepositReceipt[] memory) {\n        return depositReceipts[account];\n    }\n\n    // 银行所有者转让\n    function transferOwnership(address payable newOwner) public {\n        require(newOwner != address(0), \"Invalid new owner address.\");\n        require(msg.sender == owner, \"Only the contract owner can transfer ownership.\");\n        owner = newOwner;\n    }\n\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}

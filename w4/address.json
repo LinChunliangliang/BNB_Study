@@ -1,0 +1,12 @@
+{
+	"localhost": {
+		"ProxyAdmin": "0x8464135c8F25Da09e49BC8782676a84730C318bC",
+		"Bank": "0x948B3c65b89DF0B4894ABE91E6D02FE579834F8F",
+		"StorageStructure": ""
+	},
+	"bnbtest": {
+		"ProxyAdmin": "0xff7a29608d3A3931219C3Ee902122d6F6785Ca1f",
+		"StorageStructure": "",
+		"Bank": "0x01AFcb1a0AD38befc77F2E646e20E026c09D2CeE"
+	}
+}

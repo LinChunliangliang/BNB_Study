@@ -1,4 +1,4 @@
-##合约要求
+## 合约要求
 
 **使用Hardhat在BNB Testnet部署一套可升级的代理合约，至少包含常量，状态变量和读写状态变量的函数**
 
@@ -7,7 +7,7 @@
 - 合约完成一次升级（升级常量值和函数逻辑）并正常运行
 - 使用脚本或任务完成和合约常见的交互
 
-##合约设计
+## 合约设计
 
 **实现一个银行的智能合约**
 
@@ -110,4 +110,4 @@
   - owenindex：所有者地址下标
   - addressindex：转让接受者下标
 
-  `npx hardhat transferOwnership --network bnbtest --owenindex 1 --addressindex 0
+  `npx hardhat transferOwnership --network bnbtest --owenindex 1 --addressindex 0`
